@@ -1,3 +1,7 @@
+body {
+  background-color: black;
+}
+
 .board {
   padding: 20px;
   margin-left: 400px;

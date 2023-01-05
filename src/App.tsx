@@ -192,6 +192,10 @@ const useTetris = (): TetrisHook => {
       if (e.key === "ArrowRight" || e.key === "d") {
         moveRight();
       }
+
+      if (e.key === "ArrowDown" || e.key === "s") {
+        moveDown();
+      }
     };
 
     document.addEventListener("keydown", keyClick);
@@ -202,6 +206,10 @@ const useTetris = (): TetrisHook => {
   }, [board]);
 
   const moveLeft = () => {
+    // Don't move if hitting wall all another piece
+    if (stopLeft(board)) {
+      return;
+    }
     const newBoard = [
       ...board.map((row) => [...row.map((square) => ({ ...square }))]),
     ];
@@ -209,7 +217,6 @@ const useTetris = (): TetrisHook => {
     for (let i = 0; i < newBoard.length; i++) {
       for (let j = 0; j < newBoard[i].length; j++) {
         if (newBoard[i][j].active) {
-          console.log(i,j)
           newBoard[i][j - 1] = newBoard[i][j];
           newBoard[i][j] = {};
         }
@@ -218,7 +225,38 @@ const useTetris = (): TetrisHook => {
     setBoard(newBoard);
   };
 
+  const stopLeft = (board: Square[][]) => {
+    for (let i = 0; i < board.length; i++) {
+      let activeJ = -1;
+      // Find leftmost active piece in each row
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j].active) {
+          activeJ = j;
+          break;
+        }
+      }
+      // If no active piece in row continue
+      if (activeJ === -1) {
+        continue;
+      }
+
+      // If piece would move off board or cover an existing piece stop movement
+      if (
+        activeJ === 0 ||
+        (!board[i][activeJ - 1].active && board[i][activeJ - 1].color)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const moveRight = () => {
+    // Don't move if hitting wall all another piece
+    if (stopRight(board)) {
+      return;
+    }
+
     const newBoard = [
       ...board.map((row) => [...row.map((square) => ({ ...square }))]),
     ];
@@ -226,13 +264,38 @@ const useTetris = (): TetrisHook => {
     for (let i = 0; i < newBoard.length; i++) {
       for (let j = newBoard[i].length - 1; j >= 0; j--) {
         if (newBoard[i][j].active) {
-          console.log(i,j)
           newBoard[i][j + 1] = newBoard[i][j];
           newBoard[i][j] = {};
         }
       }
     }
     setBoard(newBoard);
+  };
+
+  const stopRight = (board: Square[][]) => {
+    for (let i = 0; i < board.length; i++) {
+      let activeJ = -1;
+      // Find leftmost active piece in each row
+      for (let j = board[i].length - 1; j >= 0; j--) {
+        if (board[i][j].active) {
+          activeJ = j;
+          break;
+        }
+      }
+      // If no active piece in row continue
+      if (activeJ === -1) {
+        continue;
+      }
+
+      // If piece would move off board or cover an existing piece stop movement
+      if (
+        activeJ === 9 ||
+        (!board[i][activeJ + 1].active && board[i][activeJ + 1].color)
+      ) {
+        return true;
+      }
+    }
+    return false;
   };
 
   return { start, speedUp, board, gameOver };
