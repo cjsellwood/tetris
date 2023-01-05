@@ -30,18 +30,79 @@ const useTetris = (): TetrisHook => {
   };
 
   const spawnBlock = () => {
-    const newBlock = {
-      active: true,
-      color: "red",
-    };
-
     const newBoard = [
       ...board.map((row) => [...row.map((square) => ({ ...square }))]),
     ];
-    newBoard[1][3] = newBlock;
-    newBoard[1][4] = newBlock;
-    newBoard[1][5] = newBlock;
-    newBoard[1][6] = newBlock;
+
+    const shapes = [
+      [
+        [1, 3],
+        [1, 4],
+        [1, 5],
+        [1, 6],
+      ],
+      [
+        [0, 4],
+        [0, 5],
+        [1, 4],
+        [1, 5],
+      ],
+      [
+        [0, 4],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+      ],
+      [
+        [0, 3],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+      ],
+      [
+        [0, 5],
+        [1, 3],
+        [1, 4],
+        [1, 5],
+      ],
+
+      [
+        [0, 4],
+        [0, 5],
+        [1, 3],
+        [1, 4],
+      ],
+
+      [
+        [0, 3],
+        [0, 4],
+        [1, 4],
+        [1, 5],
+      ],
+    ];
+
+    const colors = [
+      "lightskyblue",
+      "yellow",
+      "forestgreen",
+      "royalblue",
+      "darkorange",
+      "springgreen",
+      "red",
+    ];
+
+    const shape = Math.floor(Math.random() * 6);
+    // const shape: number = 1;
+
+    const newBlock: Square = {
+      active: true,
+      color: colors[shape],
+    };
+
+    shapes[shape].forEach((x) => {
+      newBoard[x[0]][x[1]] = newBlock;
+    });
+
     setBoard(newBoard);
     setActivePiece(true);
   };
@@ -53,10 +114,8 @@ const useTetris = (): TetrisHook => {
 
     // Check if can move down
     if (shouldStop(newBoard)) {
-      setActivePiece(false);
-
       // Set to inactive
-      for (let i = newBoard.length - 1; i >= 0; i--) {
+      for (let i = 0; i < newBoard.length; i++) {
         for (let j = 0; j < newBoard[i].length; j++) {
           if (newBoard[i][j].active) {
             newBoard[i][j] = { ...newBoard[i][j], active: false };
@@ -64,6 +123,7 @@ const useTetris = (): TetrisHook => {
         }
       }
       setBoard(newBoard);
+      setActivePiece(false);
       return;
     }
 
@@ -80,22 +140,29 @@ const useTetris = (): TetrisHook => {
   };
 
   const shouldStop = (board: Square[][]) => {
-    let stop = false;
     for (let j = 0; j < board[0].length; j++) {
-      let activeI = null;
+      let activeI = -1;
       // Find lowest active piece in each row
       for (let i = board.length - 1; i >= 0; i--) {
         if (board[i][j].active) {
           activeI = i;
-          continue;
+          break;
         }
       }
+      // If no active piece in column continue
+      if (activeI === -1) {
+        continue;
+      }
+
       // If piece would move off board or cover an existing piece stop movement
-      if (activeI && (activeI + 1 === 20 || board[activeI + 1][j].color)) {
+      if (
+        activeI === 19 ||
+        (!board[activeI + 1][j].active && board[activeI + 1][j].color)
+      ) {
         return true;
       }
     }
-    return stop;
+    return false;
   };
 
   useInterval(gameLoop, timing);
