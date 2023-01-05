@@ -1,28 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import "./App.css";
-
-const useInterval = (callback: Function, delay: number | null) => {
-  const savedCallback = useRef<undefined | Function>();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      if (!savedCallback.current) {
-        return;
-      }
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-};
+import useInterval from "./useInterval";
 
 interface Square {
   active?: boolean;
@@ -57,7 +35,9 @@ const useTetris = (): TetrisHook => {
       color: "red",
     };
 
-    const newBoard = [...board.map((row) => [...row])];
+    const newBoard = [
+      ...board.map((row) => [...row.map((square) => ({ ...square }))]),
+    ];
     newBoard[1][3] = newBlock;
     newBoard[1][4] = newBlock;
     newBoard[1][5] = newBlock;
@@ -67,7 +47,27 @@ const useTetris = (): TetrisHook => {
   };
 
   const moveDown = () => {
-    const newBoard = [...board.map((row) => [...row])];
+    const newBoard = [
+      ...board.map((row) => [...row.map((square) => ({ ...square }))]),
+    ];
+
+    // Check if can move down
+    if (shouldStop(newBoard)) {
+      setActivePiece(false);
+
+      // Set to inactive
+      for (let i = newBoard.length - 1; i >= 0; i--) {
+        for (let j = 0; j < newBoard[i].length; j++) {
+          if (newBoard[i][j].active) {
+            newBoard[i][j] = { ...newBoard[i][j], active: false };
+          }
+        }
+      }
+      setBoard(newBoard);
+      return;
+    }
+
+    // Move piece down
     for (let i = newBoard.length - 1; i >= 0; i--) {
       for (let j = 0; j < newBoard[i].length; j++) {
         if (newBoard[i][j].active) {
@@ -79,13 +79,32 @@ const useTetris = (): TetrisHook => {
     setBoard(newBoard);
   };
 
+  const shouldStop = (board: Square[][]) => {
+    let stop = false;
+    for (let j = 0; j < board[0].length; j++) {
+      let activeI = null;
+      // Find lowest active piece in each row
+      for (let i = board.length - 1; i >= 0; i--) {
+        if (board[i][j].active) {
+          activeI = i;
+          continue;
+        }
+      }
+      // If piece would move off board or cover an existing piece stop movement
+      if (activeI && (activeI + 1 === 20 || board[activeI + 1][j].color)) {
+        return true;
+      }
+    }
+    return stop;
+  };
+
   useInterval(gameLoop, timing);
   const start = () => {
-    setTiming(1000);
+    setTiming(500);
   };
 
   const speedUp = () => {
-    setTiming((timing) => (timing || 1000) - 100);
+    setTiming((timing) => (timing || 500) - 100);
   };
 
   return { start, speedUp, board };
@@ -99,13 +118,14 @@ function App() {
       <button onClick={() => start()}>Start</button>
       <button onClick={() => speedUp()}>Speed Up</button>
       <div className="board">
-        {board.map((row) => {
+        {board.map((row, i) => {
           return (
-            <div className="row">
-              {row.map((square) => {
+            <div className="row" key={"row" + i}>
+              {row.map((square, j) => {
                 return (
                   <div
                     className="square"
+                    key={"square" + j}
                     style={{
                       backgroundColor: `${
                         square.color ? square.color : "black"
