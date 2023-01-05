@@ -11,15 +11,16 @@ interface TetrisHook {
   start: () => void;
   speedUp: () => void;
   board: Square[][];
+  gameOver: boolean;
 }
 
 const useTetris = (): TetrisHook => {
-  const [gameInterval, setGameInterval] = useState(0);
   const [timing, setTiming] = useState<null | number>(null);
   const [board, setBoard] = useState<Square[][]>(
     new Array(20).fill(new Array(10).fill({}))
   );
   const [activePiece, setActivePiece] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   const gameLoop = () => {
     if (!activePiece) {
@@ -93,6 +94,12 @@ const useTetris = (): TetrisHook => {
 
     const shape = Math.floor(Math.random() * 6);
     // const shape: number = 1;
+
+    if (shapes[shape].some((x) => newBoard[x[0]][x[1]].color)) {
+      setTiming(null);
+      setGameOver(true);
+      return;
+    }
 
     const newBlock: Square = {
       active: true,
@@ -174,11 +181,11 @@ const useTetris = (): TetrisHook => {
     setTiming((timing) => (timing || 500) - 100);
   };
 
-  return { start, speedUp, board };
+  return { start, speedUp, board, gameOver };
 };
 
 function App() {
-  const { start, speedUp, board } = useTetris();
+  const { start, speedUp, board, gameOver } = useTetris();
 
   return (
     <div className="App">
@@ -205,6 +212,7 @@ function App() {
           );
         })}
       </div>
+      {gameOver && <h1>GAME OVER</h1>}
     </div>
   );
 }
