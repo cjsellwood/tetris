@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import useInterval from "./useInterval";
 
@@ -92,9 +92,9 @@ const useTetris = (): TetrisHook => {
       "red",
     ];
 
-    const shape = Math.floor(Math.random() * 6);
-    // const shape: number = 1;
+    const shape = Math.floor(Math.random() * 7);
 
+    // Game is over if shape would cover another shape
     if (shapes[shape].some((x) => newBoard[x[0]][x[1]].color)) {
       setTiming(null);
       setGameOver(true);
@@ -179,6 +179,60 @@ const useTetris = (): TetrisHook => {
 
   const speedUp = () => {
     setTiming((timing) => (timing || 500) - 100);
+  };
+
+  useEffect(() => {
+    const keyClick = (e: KeyboardEvent) => {
+      console.log(e);
+
+      if (e.key === "ArrowLeft" || e.key === "a") {
+        moveLeft();
+      }
+
+      if (e.key === "ArrowRight" || e.key === "d") {
+        moveRight();
+      }
+    };
+
+    document.addEventListener("keydown", keyClick);
+
+    return () => {
+      document.removeEventListener("keydown", keyClick);
+    };
+  }, [board]);
+
+  const moveLeft = () => {
+    const newBoard = [
+      ...board.map((row) => [...row.map((square) => ({ ...square }))]),
+    ];
+
+    for (let i = 0; i < newBoard.length; i++) {
+      for (let j = 0; j < newBoard[i].length; j++) {
+        if (newBoard[i][j].active) {
+          console.log(i,j)
+          newBoard[i][j - 1] = newBoard[i][j];
+          newBoard[i][j] = {};
+        }
+      }
+    }
+    setBoard(newBoard);
+  };
+
+  const moveRight = () => {
+    const newBoard = [
+      ...board.map((row) => [...row.map((square) => ({ ...square }))]),
+    ];
+
+    for (let i = 0; i < newBoard.length; i++) {
+      for (let j = newBoard[i].length - 1; j >= 0; j--) {
+        if (newBoard[i][j].active) {
+          console.log(i,j)
+          newBoard[i][j + 1] = newBoard[i][j];
+          newBoard[i][j] = {};
+        }
+      }
+    }
+    setBoard(newBoard);
   };
 
   return { start, speedUp, board, gameOver };
