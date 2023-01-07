@@ -22,6 +22,10 @@ interface TetrisHook {
   speedUp: () => void;
   board: Square[][];
   gameOver: boolean;
+  level: number;
+  lines: number;
+  score: number;
+  highScore: number;
 }
 
 const useTetris = (): TetrisHook => {
@@ -30,7 +34,11 @@ const useTetris = (): TetrisHook => {
     new Array(20).fill(new Array(10).fill({}))
   );
   const [activePiece, setActivePiece] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
+  const [gameOver, setGameOver] = useState(true);
+  const [score, setScore] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [lines, setLines] = useState(0);
+  const [highScore, setHighScore] = useState(0);
 
   const gameLoop = () => {
     if (!activePiece) {
@@ -125,6 +133,7 @@ const useTetris = (): TetrisHook => {
   useInterval(gameLoop, timing);
   const start = () => {
     setTiming(500);
+    setGameOver(false);
   };
 
   const speedUp = () => {
@@ -174,11 +183,7 @@ const useTetris = (): TetrisHook => {
     };
   }, [board]);
 
-  const rotatePiece = () => {
-
-  };
-
-  return { start, speedUp, board, gameOver };
+  return { start, speedUp, board, gameOver, level, lines, score, highScore };
 };
 
 export default useTetris;
