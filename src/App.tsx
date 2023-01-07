@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import useInterval from "./useInterval";
+import { rotate } from "./rotate";
 
-interface Square {
+export interface Square {
   active?: boolean;
-  color?: string;
+  name?: string;
+  orientation?: number;
 }
 
 interface TetrisHook {
@@ -82,20 +84,12 @@ const useTetris = (): TetrisHook => {
       ],
     ];
 
-    const colors = [
-      "lightskyblue",
-      "yellow",
-      "forestgreen",
-      "royalblue",
-      "darkorange",
-      "springgreen",
-      "red",
-    ];
+    const names = ["I", "O", "T", "J", "L", "S", "Z"];
 
-    const shape = Math.floor(Math.random() * 7);
+    const selectedShape = Math.floor(Math.random() * 7);
 
     // Game is over if shape would cover another shape
-    if (shapes[shape].some((x) => newBoard[x[0]][x[1]].color)) {
+    if (shapes[selectedShape].some((x) => newBoard[x[0]][x[1]].name)) {
       setTiming(null);
       setGameOver(true);
       return;
@@ -103,11 +97,12 @@ const useTetris = (): TetrisHook => {
 
     const newBlock: Square = {
       active: true,
-      color: colors[shape],
+      name: names[selectedShape],
+      orientation: 0,
     };
 
-    shapes[shape].forEach((x) => {
-      newBoard[x[0]][x[1]] = newBlock;
+    shapes[selectedShape].forEach((x) => {
+      newBoard[x[0]][x[1]] = { ...newBlock };
     });
 
     setBoard(newBoard);
@@ -125,7 +120,7 @@ const useTetris = (): TetrisHook => {
       for (let i = 0; i < newBoard.length; i++) {
         for (let j = 0; j < newBoard[i].length; j++) {
           if (newBoard[i][j].active) {
-            newBoard[i][j] = { ...newBoard[i][j], active: false };
+            newBoard[i][j] = { name: newBoard[i][j].name, active: false };
           }
         }
       }
@@ -164,7 +159,7 @@ const useTetris = (): TetrisHook => {
       // If piece would move off board or cover an existing piece stop movement
       if (
         activeI === 19 ||
-        (!board[activeI + 1][j].active && board[activeI + 1][j].color)
+        (!board[activeI + 1][j].active && board[activeI + 1][j].name)
       ) {
         return true;
       }
@@ -195,6 +190,10 @@ const useTetris = (): TetrisHook => {
 
       if (e.key === "ArrowDown" || e.key === "s") {
         moveDown();
+      }
+
+      if (e.key === "ArrowUp" || e.key === "w") {
+        rotatePiece();
       }
     };
 
@@ -243,7 +242,7 @@ const useTetris = (): TetrisHook => {
       // If piece would move off board or cover an existing piece stop movement
       if (
         activeJ === 0 ||
-        (!board[i][activeJ - 1].active && board[i][activeJ - 1].color)
+        (!board[i][activeJ - 1].active && board[i][activeJ - 1].name)
       ) {
         return true;
       }
@@ -290,12 +289,21 @@ const useTetris = (): TetrisHook => {
       // If piece would move off board or cover an existing piece stop movement
       if (
         activeJ === 9 ||
-        (!board[i][activeJ + 1].active && board[i][activeJ + 1].color)
+        (!board[i][activeJ + 1].active && board[i][activeJ + 1].name)
       ) {
         return true;
       }
     }
     return false;
+  };
+
+  const rotatePiece = () => {
+    const newBoard = rotate(board);
+    // Can not rotate
+    if (!newBoard) {
+      return;
+    }
+    setBoard(newBoard);
   };
 
   return { start, speedUp, board, gameOver };
@@ -315,13 +323,8 @@ function App() {
               {row.map((square, j) => {
                 return (
                   <div
-                    className="square"
+                    className={`square ${square.name}`}
                     key={"square" + j}
-                    style={{
-                      backgroundColor: `${
-                        square.color ? square.color : "black"
-                      }`,
-                    }}
                   ></div>
                 );
               })}
