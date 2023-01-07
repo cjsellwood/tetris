@@ -1,7 +1,7 @@
 import { Square } from "../src/App";
 import { findBounds, rotate } from "../src/rotate";
 
-describe.only("Finding shape bounds", () => {
+describe("Finding shape bounds", () => {
   test("Finds I shape bounds in up orientation", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
     const board = [
@@ -139,7 +139,7 @@ describe("Rotating piece", () => {
     const board = [
       ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
     ];
-    const block = { active: true, name: "J" };
+    const block = { active: true, name: "J", orientation: 0 };
     board[7][3] = { ...block };
     board[8][3] = { ...block };
     board[8][4] = { ...block };
@@ -151,18 +151,49 @@ describe("Rotating piece", () => {
     if (!newBoard) {
       return;
     }
+    const updatedBlock = { active: true, name: "J", orientation: 1 };
     expect(newBoard[7][3]).toEqual({});
-    expect(newBoard[7][4]).toEqual(block);
-    expect(newBoard[7][5]).toEqual(block);
+    expect(newBoard[7][4]).toEqual(updatedBlock);
+    expect(newBoard[7][5]).toEqual(updatedBlock);
     expect(newBoard[8][3]).toEqual({});
-    expect(newBoard[8][4]).toEqual(block);
+    expect(newBoard[8][4]).toEqual(updatedBlock);
     expect(newBoard[8][5]).toEqual({});
     expect(newBoard[9][3]).toEqual({});
-    expect(newBoard[9][4]).toEqual(block);
+    expect(newBoard[9][4]).toEqual(updatedBlock);
     expect(newBoard[9][5]).toEqual({});
   });
 
   test("rotates a J shape that has already been rotated", () => {
+    const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
+    const board = [
+      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
+    ];
+    const block = { active: true, name: "J", orientation: 1 };
+    board[7][4] = { ...block };
+    board[7][5] = { ...block };
+    board[8][4] = { ...block };
+    board[9][4] = { ...block };
+
+    const newBoard = rotate(board);
+
+    expect(newBoard).not.toBeUndefined();
+    if (!newBoard) {
+      return;
+    }
+    const updatedBlock = { active: true, name: "J", orientation: 2 };
+
+    expect(newBoard[7][3]).toEqual({});
+    expect(newBoard[7][4]).toEqual({});
+    expect(newBoard[7][5]).toEqual({});
+    expect(newBoard[8][3]).toEqual(updatedBlock);
+    expect(newBoard[8][4]).toEqual(updatedBlock);
+    expect(newBoard[8][5]).toEqual(updatedBlock);
+    expect(newBoard[9][3]).toEqual({});
+    expect(newBoard[9][4]).toEqual({});
+    expect(newBoard[9][5]).toEqual(updatedBlock);
+  });
+
+  test.only("Does not rotate a J shape that would go over edge", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
     const board = [
       ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),

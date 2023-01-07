@@ -58,6 +58,19 @@ export const findBounds = (board: Square[][]) => {
   }
 };
 
+const rotateMatrix = (matrix: Square[][]) => {
+  // Rotate piece by transposing matrix and reversing each row
+  const rotated = [];
+  for (let i = 0; i < matrix.length; i++) {
+    const row = [];
+    for (let j = 0; j < matrix[i].length; j++) {
+      row.push(matrix[j][i]);
+    }
+    rotated.push(row.reverse());
+  }
+  return rotated;
+};
+
 export const rotate = (board: Square[][]) => {
   const [lowI, highI, lowJ, highJ] = findBounds(board);
 
@@ -76,23 +89,14 @@ export const rotate = (board: Square[][]) => {
     }
     matrix.push(row);
   }
-  console.log(matrix);
 
-  // Rotate piece by transposing matrix and reversing each row
-  const transposed = [];
-  for (let i = 0; i < matrix.length; i++) {
-    const row = [];
-    for (let j = 0; j < matrix[i].length; j++) {
-      row.push(matrix[j][i]);
-    }
-    transposed.push(row.reverse());
-  }
+  const rotatedMatrix = rotateMatrix(matrix);
 
   // Check if piece would cover another
-  for (let i = 0; i < transposed.length; i++) {
-    for (let j = 0; j < transposed[i].length; j++) {
+  for (let i = 0; i < rotatedMatrix.length; i++) {
+    for (let j = 0; j < rotatedMatrix[i].length; j++) {
       if (
-        transposed[i][j].active &&
+        rotatedMatrix[i][j].active &&
         !board[i + lowI][j + lowJ].active &&
         board[i + lowI][j + lowJ].name
       ) {
@@ -101,12 +105,23 @@ export const rotate = (board: Square[][]) => {
     }
   }
 
+  // Change orientation of active pieces
+  for (let i = 0; i < rotatedMatrix.length; i++) {
+    for (let j = 0; j < rotatedMatrix[i].length; j++) {
+      if (rotatedMatrix[i][j].active) {
+        rotatedMatrix[i][j] = {
+          ...rotatedMatrix[i][j],
+          orientation: (rotatedMatrix[i][j].orientation! + 1) % 4,
+        };
+      }
+    }
+  }
+
   // Swap matrix into board
-  for (let i = 0; i < transposed.length; i++) {
-    for (let j = 0; j < transposed[i].length; j++) {
+  for (let i = 0; i < rotatedMatrix.length; i++) {
+    for (let j = 0; j < rotatedMatrix[i].length; j++) {
       newBoard[lowI + i][lowJ + j] = {
-        ...transposed[i][j],
-        orientation: (transposed[i][j].orientation! + 1) % 4,
+        ...rotatedMatrix[i][j],
       };
     }
   }
