@@ -17,7 +17,7 @@ export const moveDown = (board: Square[][]) => {
   return newBoard;
 };
 
-const clearRows = (board: Square[][]) => {
+const clearRows = (board: Square[][], scoreLines: (lines: number) => void) => {
   const clearedBoard = [];
 
   // Add to new board only if has a clear space in a row
@@ -27,6 +27,10 @@ const clearRows = (board: Square[][]) => {
     }
   }
 
+  if (20 - clearedBoard.length > 0) {
+    scoreLines(20 - clearedBoard.length);
+  }
+
   // Add extra rows to top to replace cleared rows
   for (let i = 0; i < 20 - clearedBoard.length; i++) {
     clearedBoard.unshift(new Array(10).fill({}));
@@ -34,7 +38,10 @@ const clearRows = (board: Square[][]) => {
   return clearedBoard;
 };
 
-export const lockBlock = (board: Square[][]) => {
+export const lockBlock = (
+  board: Square[][],
+  scoreLines: (lines: number) => void
+) => {
   const newBoard = [
     ...board.map((row) => [...row.map((square) => ({ ...square }))]),
   ];
@@ -48,9 +55,9 @@ export const lockBlock = (board: Square[][]) => {
     }
   }
 
-  const clearedBoard = clearRows(newBoard);
+  const clearedBoard = clearRows(newBoard, scoreLines);
 
-  return clearedBoard
+  return clearedBoard;
 };
 
 export const blockedDown = (board: Square[][]) => {

@@ -34,7 +34,7 @@ const useTetris = (): TetrisHook => {
     new Array(20).fill(new Array(10).fill({}))
   );
   const [activePiece, setActivePiece] = useState(false);
-  const [gameOver, setGameOver] = useState(true);
+  const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [lines, setLines] = useState(0);
@@ -44,7 +44,7 @@ const useTetris = (): TetrisHook => {
     if (!activePiece) {
       spawnBlock();
     } else if (blockedDown(board)) {
-      const newBoard = lockBlock(board);
+      const newBoard = lockBlock(board, scoreLines);
       setActivePiece(false);
       setBoard(newBoard);
     } else {
@@ -131,13 +131,27 @@ const useTetris = (): TetrisHook => {
   };
 
   useInterval(gameLoop, timing);
+
   const start = () => {
-    setTiming(500);
     setGameOver(false);
   };
 
   const speedUp = () => {
-    setTiming((timing) => (timing || 500) - 100);
+    setTiming((timing) => (timing || 1000) - 100);
+  };
+
+  const scoreLines = (clearedLines: number) => {
+    const newLevel = 1 + Math.floor((lines + clearedLines) / 10);
+    const lineScores: { [n: number]: number } = {
+      1: 40,
+      2: 100,
+      3: 300,
+      4: 1200,
+    };
+    
+    setLines((l) => l + clearedLines);
+    setScore((s) => s + lineScores[clearedLines] * level);
+    setLevel((l) => newLevel);
   };
 
   useEffect(() => {
@@ -182,6 +196,11 @@ const useTetris = (): TetrisHook => {
       document.removeEventListener("keydown", keyClick);
     };
   }, [board]);
+
+  // Start game on initial load
+  useEffect(() => {
+    setTiming(1000);
+  }, []);
 
   return { start, speedUp, board, gameOver, level, lines, score, highScore };
 };

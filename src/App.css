@@ -59,6 +59,12 @@ body {
   background-color: rgb(230, 230, 230);
 }
 
+.info .game-over {
+  font-size: min(6vw, 6vh);
+  color: white;
+  white-space: nowrap;
+}
+
 .high-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

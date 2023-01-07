@@ -36,7 +36,8 @@ function App() {
             <h1>{score}</h1>
           </div>
           {gameOver && (
-            <h1 style={{ fontSize: "min(6vw, 6vh)", color: "white" }}>
+            <h1 className="game-over"
+            >
               GAME OVER
             </h1>
           )}
