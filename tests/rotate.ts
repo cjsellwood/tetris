@@ -198,26 +198,14 @@ describe("Rotating piece", () => {
     const board = [
       ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
     ];
-    const block = { active: true, name: "J" };
-    board[7][4] = { ...block };
-    board[7][5] = { ...block };
-    board[8][4] = { ...block };
-    board[9][4] = { ...block };
+    const block = { active: true, name: "J", orientation: 1 };
+    board[7][0] = { ...block };
+    board[7][1] = { ...block };
+    board[8][0] = { ...block };
+    board[9][0] = { ...block };
 
     const newBoard = rotate(board);
 
-    expect(newBoard).not.toBeUndefined();
-    if (!newBoard) {
-      return;
-    }
-    expect(newBoard[7][3]).toEqual({});
-    expect(newBoard[7][4]).toEqual({});
-    expect(newBoard[7][5]).toEqual({});
-    expect(newBoard[8][3]).toEqual(block);
-    expect(newBoard[8][4]).toEqual(block);
-    expect(newBoard[8][5]).toEqual(block);
-    expect(newBoard[9][3]).toEqual({});
-    expect(newBoard[9][4]).toEqual({});
-    expect(newBoard[9][5]).toEqual(block);
+    expect(newBoard).toBeUndefined();
   });
 });

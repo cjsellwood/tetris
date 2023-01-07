@@ -73,6 +73,10 @@ const rotateMatrix = (matrix: Square[][]) => {
 
 export const rotate = (board: Square[][]) => {
   const [lowI, highI, lowJ, highJ] = findBounds(board);
+  // Don't rotate if it would end up out of bounds
+  if (lowI < 0 || highI > 19 || lowJ < 0 || highJ > 9) {
+    return;
+  }
 
   const newBoard: Square[][] = [
     ...board.map((row) => [...row.map((square) => ({ ...square }))]),
