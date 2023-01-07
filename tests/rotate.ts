@@ -1,4 +1,4 @@
-import { Square } from "../src/App";
+import { Square } from "../src/useTetris";
 import { findBounds, rotate } from "../src/rotate";
 
 describe("Finding shape bounds", () => {
@@ -206,6 +206,53 @@ describe("Rotating piece", () => {
 
     const newBoard = rotate(board);
 
+    expect(newBoard).toBeUndefined();
+  });
+
+  test("Rotates a J shape without effecting already placed pieces", () => {
+    const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
+    const board = [
+      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
+    ];
+    const block = { active: true, name: "J", orientation: 0 };
+    board[7][3] = { ...block };
+    board[8][3] = { ...block };
+    board[8][4] = { ...block };
+    board[8][5] = { ...block };
+    board[9][3] = { active: false, name: "O" };
+
+    const newBoard = rotate(board);
+    expect(newBoard).not.toBeUndefined();
+
+    if (!newBoard) {
+      return;
+    }
+    const updatedBlock = { active: true, name: "J", orientation: 1 };
+    expect(newBoard[7][3]).toEqual({});
+    expect(newBoard[7][4]).toEqual(updatedBlock);
+    expect(newBoard[7][5]).toEqual(updatedBlock);
+    expect(newBoard[8][3]).toEqual({});
+    expect(newBoard[8][4]).toEqual(updatedBlock);
+    expect(newBoard[8][5]).toEqual({});
+    expect(newBoard[9][3]).toEqual({ active: false, name: "O" });
+    expect(newBoard[9][4]).toEqual(updatedBlock);
+    expect(newBoard[9][5]).toEqual({});
+  });
+
+  test("Does not rotate a J shape with pieces already in position", () => {
+    const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
+    const board = [
+      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
+    ];
+    const block = { active: true, name: "J", orientation: 1 };
+    board[7][4] = { ...block };
+    board[7][5] = { ...block };
+    board[8][4] = { ...block };
+    board[9][4] = { ...block };
+    board[8][5] = { active: false, name: "O" };
+    board[9][5] = { active: false, name: "O" };
+
+    const newBoard = rotate(board);
     expect(newBoard).toBeUndefined();
   });
 });

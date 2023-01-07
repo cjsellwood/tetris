@@ -10,6 +10,7 @@ import {
   moveLeft,
   moveRight,
 } from "./movement";
+import shapes from "./shapes";
 
 export interface Square {
   active?: boolean;
@@ -60,58 +61,11 @@ const useTetris = (): TetrisHook => {
       }
     }
     return false;
-  }
+  };
 
   const spawnBlock = () => {
     const newBoard = [
       ...board.map((row) => [...row.map((square) => ({ ...square }))]),
-    ];
-
-    const shapes = [
-      [
-        [1, 3],
-        [1, 4],
-        [1, 5],
-        [1, 6],
-      ],
-      [
-        [0, 4],
-        [0, 5],
-        [1, 4],
-        [1, 5],
-      ],
-      [
-        [0, 4],
-        [1, 3],
-        [1, 4],
-        [1, 5],
-      ],
-      [
-        [0, 3],
-        [1, 3],
-        [1, 4],
-        [1, 5],
-      ],
-      [
-        [0, 5],
-        [1, 3],
-        [1, 4],
-        [1, 5],
-      ],
-
-      [
-        [0, 4],
-        [0, 5],
-        [1, 3],
-        [1, 4],
-      ],
-
-      [
-        [0, 3],
-        [0, 4],
-        [1, 4],
-        [1, 5],
-      ],
     ];
 
     const names = ["I", "O", "T", "J", "L", "S", "Z"];
@@ -207,7 +161,7 @@ const useTetris = (): TetrisHook => {
       if (e.key === "ArrowDown" || e.key === "s") {
         if (blockedDown(board)) {
           const newBoard = lockBlock(board, scoreLines);
-          setBoard(newBoard)
+          setBoard(newBoard);
           return;
         }
         const newBoard = moveDown(board);

@@ -1,4 +1,4 @@
-import { Square } from "./App";
+import { Square } from "./useTetris";
 
 export const findBounds = (board: Square[][]) => {
   let [lowI, highI, lowJ, highJ] = [20, -1, 10, -1];
@@ -60,15 +60,17 @@ export const findBounds = (board: Square[][]) => {
 
 const rotateMatrix = (matrix: Square[][]) => {
   // Rotate piece by transposing matrix and reversing each row
-  const rotated = [];
+  console.log(matrix);
+  const rotatedMatrix = [];
   for (let i = 0; i < matrix.length; i++) {
     const row = [];
     for (let j = 0; j < matrix[i].length; j++) {
       row.push(matrix[j][i]);
     }
-    rotated.push(row.reverse());
+    rotatedMatrix.push(row.reverse());
   }
-  return rotated;
+
+  return rotatedMatrix;
 };
 
 export const rotate = (board: Square[][]) => {
@@ -105,6 +107,18 @@ export const rotate = (board: Square[][]) => {
         board[i + lowI][j + lowJ].name
       ) {
         return;
+      }
+    }
+  }
+
+  // Return inactive pieces to original position
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix[i].length; j++) {
+      if (!rotatedMatrix[i][j].active) {
+        rotatedMatrix[i][j] = {};
+      }
+      if (!matrix[i][j].active && matrix[i][j].name) {
+        rotatedMatrix[i][j] = matrix[i][j];
       }
     }
   }
