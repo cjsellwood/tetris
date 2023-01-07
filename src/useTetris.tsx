@@ -25,7 +25,7 @@ interface TetrisHook {
   level: number;
   lines: number;
   score: number;
-  highScore: number;
+  highScores: number[];
 }
 
 const useTetris = (): TetrisHook => {
@@ -38,7 +38,7 @@ const useTetris = (): TetrisHook => {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [lines, setLines] = useState(0);
-  const [highScore, setHighScore] = useState(0);
+  const [highScores, setHighScores] = useState([0, 0, 0, 0, 0]);
 
   const gameLoop = () => {
     if (!activePiece) {
@@ -113,6 +113,7 @@ const useTetris = (): TetrisHook => {
     if (shapes[selectedShape].some((x) => newBoard[x[0]][x[1]].name)) {
       setTiming(null);
       setGameOver(true);
+      saveScores();
       return;
     }
 
@@ -148,11 +149,32 @@ const useTetris = (): TetrisHook => {
       3: 300,
       4: 1200,
     };
-    
+
     setLines((l) => l + clearedLines);
     setScore((s) => s + lineScores[clearedLines] * level);
     setLevel((l) => newLevel);
   };
+
+  const saveScores = () => {
+    const allScores = [...highScores, score];
+    allScores.sort((a, b) => {
+      if (a < b) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    setHighScores(allScores.slice(0, 5));
+    localStorage.setItem("high", JSON.stringify(allScores.slice(0, 5)));
+  };
+
+  useEffect(() => {
+    const storedScores = localStorage.getItem("high");
+    if (!storedScores) {
+      return;
+    }
+    setHighScores(JSON.parse(storedScores) as number[]);
+  }, []);
 
   useEffect(() => {
     const keyClick = (e: KeyboardEvent) => {
@@ -202,7 +224,7 @@ const useTetris = (): TetrisHook => {
     setTiming(1000);
   }, []);
 
-  return { start, speedUp, board, gameOver, level, lines, score, highScore };
+  return { start, speedUp, board, gameOver, level, lines, score, highScores };
 };
 
 export default useTetris;

@@ -1,8 +1,9 @@
+import { Fragment } from "react";
 import "./App.css";
 import useTetris from "./useTetris";
 
 function App() {
-  const { start, board, gameOver, level, lines, score, highScore } =
+  const { start, board, gameOver, level, lines, score, highScores } =
     useTetris();
 
   return (
@@ -35,26 +36,19 @@ function App() {
             <h2>Score</h2>
             <h1>{score}</h1>
           </div>
-          {gameOver && (
-            <h1 className="game-over"
-            >
-              GAME OVER
-            </h1>
-          )}
+          {gameOver && <h1 className="game-over">GAME OVER</h1>}
           {gameOver && (
             <div>
               <h2>High Scores</h2>
               <div className="high-grid">
-                <h2>1.</h2>
-                <h1>1000</h1>
-                <h2>2.</h2>
-                <h1>1000</h1>
-                <h2>3.</h2>
-                <h1>1000</h1>
-                <h2>4.</h2>
-                <h1>1000</h1>
-                <h2>5.</h2>
-                <h1>0</h1>
+                {highScores.map((score, i) => {
+                  return (
+                    <Fragment key={"score" + i}>
+                      <h2>{i + 1}.</h2>
+                      <h1>{score}</h1>
+                    </Fragment>
+                  );
+                })}
               </div>
             </div>
           )}
