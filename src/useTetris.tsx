@@ -33,7 +33,6 @@ const useTetris = (): TetrisHook => {
   const [board, setBoard] = useState<Square[][]>(
     new Array(20).fill(new Array(10).fill({}))
   );
-  const [activePiece, setActivePiece] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -41,17 +40,27 @@ const useTetris = (): TetrisHook => {
   const [highScores, setHighScores] = useState([0, 0, 0, 0, 0]);
 
   const gameLoop = () => {
-    if (!activePiece) {
+    if (!isActive()) {
       spawnBlock();
     } else if (blockedDown(board)) {
       const newBoard = lockBlock(board, scoreLines);
-      setActivePiece(false);
       setBoard(newBoard);
     } else {
       const newBoard = moveDown(board);
       setBoard(newBoard);
     }
   };
+
+  const isActive = () => {
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[j].length; j++) {
+        if (board[i][j].active) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   const spawnBlock = () => {
     const newBoard = [
@@ -128,7 +137,6 @@ const useTetris = (): TetrisHook => {
     });
 
     setBoard(newBoard);
-    setActivePiece(true);
   };
 
   useInterval(gameLoop, timing);
@@ -155,6 +163,7 @@ const useTetris = (): TetrisHook => {
     setLevel((l) => newLevel);
   };
 
+  // Set and save high scores
   const saveScores = () => {
     const allScores = [...highScores, score];
     allScores.sort((a, b) => {
@@ -168,6 +177,7 @@ const useTetris = (): TetrisHook => {
     localStorage.setItem("high", JSON.stringify(allScores.slice(0, 5)));
   };
 
+  // Load stored high scores
   useEffect(() => {
     const storedScores = localStorage.getItem("high");
     if (!storedScores) {
@@ -196,6 +206,8 @@ const useTetris = (): TetrisHook => {
 
       if (e.key === "ArrowDown" || e.key === "s") {
         if (blockedDown(board)) {
+          const newBoard = lockBlock(board, scoreLines);
+          setBoard(newBoard)
           return;
         }
         const newBoard = moveDown(board);
