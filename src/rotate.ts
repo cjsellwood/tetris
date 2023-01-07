@@ -60,7 +60,6 @@ export const findBounds = (board: Square[][]) => {
 
 const rotateMatrix = (matrix: Square[][]) => {
   // Rotate piece by transposing matrix and reversing each row
-  console.log(matrix);
   const rotatedMatrix = [];
   for (let i = 0; i < matrix.length; i++) {
     const row = [];

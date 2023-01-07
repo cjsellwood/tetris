@@ -70,7 +70,8 @@ const useTetris = (): TetrisHook => {
 
     const names = ["I", "O", "T", "J", "L", "S", "Z"];
 
-    const selectedShape = Math.floor(Math.random() * 7);
+    // const selectedShape = Math.floor(Math.random() * 7);
+    const selectedShape = 1
 
     // Game is over if shape would cover another shape
     if (shapes[selectedShape].some((x) => newBoard[x[0]][x[1]].name)) {

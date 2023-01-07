@@ -27,14 +27,16 @@ const clearRows = (board: Square[][], scoreLines: (lines: number) => void) => {
     }
   }
 
-  if (20 - clearedBoard.length > 0) {
-    scoreLines(20 - clearedBoard.length);
+  const linesCleared = 20 - clearedBoard.length;
+  if (linesCleared > 0) {
+    scoreLines(linesCleared);
   }
 
   // Add extra rows to top to replace cleared rows
-  for (let i = 0; i < 20 - clearedBoard.length; i++) {
-    clearedBoard.unshift(new Array(10).fill({}));
+  for (let i = 0; i < linesCleared; i++) {
+    clearedBoard.unshift([...new Array(10).fill({})]);
   }
+
   return clearedBoard;
 };
 
