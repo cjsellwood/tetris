@@ -193,7 +193,7 @@ describe("Rotating piece", () => {
     expect(newBoard[9][5]).toEqual(updatedBlock);
   });
 
-  test.only("Does not rotate a J shape that would go over edge", () => {
+  test("Does not rotate a J shape that would go over edge", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
     const board = [
       ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
