@@ -9,6 +9,7 @@ function App() {
   return (
     <div className="App">
       <div className="game">
+        <div></div>
         <div className="board-container">
           <div className="board">
             {board.map((row, i) => {
