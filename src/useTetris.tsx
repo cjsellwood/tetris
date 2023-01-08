@@ -63,6 +63,8 @@ const useTetris = (): TetrisHook => {
     return false;
   };
 
+  const [usedShapes, setUsedShapes] = useState<string[]>([]);
+
   const spawnBlock = () => {
     const newBoard = [
       ...board.map((row) => [...row.map((square) => ({ ...square }))]),
@@ -70,7 +72,17 @@ const useTetris = (): TetrisHook => {
 
     const names = ["I", "O", "T", "J", "L", "S", "Z"];
 
-    const selectedShape = Math.floor(Math.random() * 7);
+    // Shapes are selected randomly from shapes until all have appeared once
+    let selectedShape = Math.floor(Math.random() * 7);
+    while (usedShapes.includes(names[selectedShape])) {
+      selectedShape = Math.floor(Math.random() * 7);
+    }
+    if (usedShapes.length === 6) {
+      setUsedShapes([]);
+    } else {
+      setUsedShapes([...usedShapes, names[selectedShape]]);
+    }
+    console.log(usedShapes);
 
     // Game is over if shape would cover another shape
     if (shapes[selectedShape].some((x) => newBoard[x[0]][x[1]].name)) {
