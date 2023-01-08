@@ -20,7 +20,6 @@ export interface Square {
 
 interface TetrisHook {
   start: () => void;
-  speedUp: () => void;
   board: Square[][];
   gameOver: boolean;
   level: number;
@@ -39,6 +38,7 @@ const useTetris = (): TetrisHook => {
   const [level, setLevel] = useState(1);
   const [lines, setLines] = useState(0);
   const [highScores, setHighScores] = useState([0, 0, 0, 0, 0]);
+  const [reset, setReset] = useState(Date.now());
 
   const gameLoop = () => {
     if (!isActive()) {
@@ -71,7 +71,7 @@ const useTetris = (): TetrisHook => {
     const names = ["I", "O", "T", "J", "L", "S", "Z"];
 
     // const selectedShape = Math.floor(Math.random() * 7);
-    const selectedShape = 1
+    const selectedShape = 1;
 
     // Game is over if shape would cover another shape
     if (shapes[selectedShape].some((x) => newBoard[x[0]][x[1]].name)) {
@@ -94,14 +94,10 @@ const useTetris = (): TetrisHook => {
     setBoard(newBoard);
   };
 
-  useInterval(gameLoop, timing);
+  useInterval(gameLoop, timing, reset);
 
   const start = () => {
     setGameOver(false);
-  };
-
-  const speedUp = () => {
-    setTiming((timing) => (timing || 1000) - 100);
   };
 
   const scoreLines = (clearedLines: number) => {
@@ -115,12 +111,18 @@ const useTetris = (): TetrisHook => {
 
     setLines((l) => l + clearedLines);
     setScore((s) => s + lineScores[clearedLines] * level);
-    setLevel((l) => newLevel);
+    setLevel(newLevel);
+    if (newLevel <= 8) {
+      setTiming(1000 - newLevel * 100);
+    } else {
+      setTiming(1000 / newLevel);
+    }
   };
 
   // Set and save high scores
   const saveScores = () => {
     const allScores = [...highScores, score];
+    console.log(allScores);
     allScores.sort((a, b) => {
       if (a < b) {
         return 1;
@@ -128,6 +130,7 @@ const useTetris = (): TetrisHook => {
         return -1;
       }
     });
+    console.log(allScores.slice(0, 5));
     setHighScores(allScores.slice(0, 5));
     localStorage.setItem("high", JSON.stringify(allScores.slice(0, 5)));
   };
@@ -162,6 +165,7 @@ const useTetris = (): TetrisHook => {
       if (e.key === "ArrowDown" || e.key === "s") {
         if (blockedDown(board)) {
           const newBoard = lockBlock(board, scoreLines);
+          setReset(Date.now());
           setBoard(newBoard);
           return;
         }
@@ -191,7 +195,7 @@ const useTetris = (): TetrisHook => {
     setTiming(1000);
   }, []);
 
-  return { start, speedUp, board, gameOver, level, lines, score, highScores };
+  return { start, board, gameOver, level, lines, score, highScores };
 };
 
 export default useTetris;
