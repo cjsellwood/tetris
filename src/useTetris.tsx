@@ -82,7 +82,6 @@ const useTetris = (): TetrisHook => {
     } else {
       setUsedShapes([...usedShapes, names[selectedShape]]);
     }
-    console.log(usedShapes);
 
     // Game is over if shape would cover another shape
     if (shapes[selectedShape].some((x) => newBoard[x[0]][x[1]].name)) {
@@ -138,7 +137,6 @@ const useTetris = (): TetrisHook => {
   // Set and save high scores
   const saveScores = () => {
     const allScores = [...highScores, score];
-    console.log(allScores);
     allScores.sort((a, b) => {
       if (a < b) {
         return 1;
@@ -146,7 +144,6 @@ const useTetris = (): TetrisHook => {
         return -1;
       }
     });
-    console.log(allScores.slice(0, 5));
     setHighScores(allScores.slice(0, 5));
     localStorage.setItem("high", JSON.stringify(allScores.slice(0, 5)));
   };

@@ -124,35 +124,29 @@ body {
 }
 
 .I {
-  background-color: #00ffff;
+  background-color: #18f2fd;
 }
 
 .O {
-  background-color: #ffff00;
+  background-color: rgb(241, 241, 1);
 }
 
 .T {
-  background-color: purple;
+  background-color: #a138f2;
 }
 
 .J {
-  background-color: #0000ff;
+  background-color: #236dff;
 }
 
 .L {
-  background-color: #ff7f00;
+  background-color: #ff9d00;
 }
 
 .S {
-  background-color: green;
+  background-color: #1be109;
 }
 
 .Z {
-  background-color: #ff0000;
-}
-
-h1 {
-  color: white;
-  font-size: 20px;
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f41b1b;
 }
