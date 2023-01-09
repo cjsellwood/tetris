@@ -1,20 +1,18 @@
-import {
-  Fragment,
-  ReactEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Fragment } from "react";
 import "./App.css";
 import useTetris from "./useTetris";
 
 function App() {
   const {
     start,
-    leftControl,
-    rightControl,
-    upControl,
-    downControl,
+    setKeyLeft,
+    setKeyRight,
+    setKeyUp,
+    setKeyDown,
+    setLeftClicks,
+    setRightClicks,
+    setUpClicks,
+    setDownClicks,
     board,
     gameOver,
     level,
@@ -24,23 +22,39 @@ function App() {
   } = useTetris();
 
   const leftPress = () => {
-    leftControl();
-    window.navigator.vibrate(100);
+    setKeyLeft(true);
   };
 
   const rightPress = () => {
-    rightControl();
-    window.navigator.vibrate(100);
+    setKeyRight(true);
   };
 
   const upPress = () => {
-    upControl();
-    window.navigator.vibrate(100);
+    setKeyUp(true);
   };
 
   const downPress = () => {
-    downControl();
-    window.navigator.vibrate(100);
+    setKeyDown(true);
+  };
+
+  const leftRelease = () => {
+    setKeyLeft(false);
+    setLeftClicks(0);
+  };
+
+  const rightRelease = () => {
+    setKeyRight(false);
+    setRightClicks(0);
+  };
+
+  const upRelease = () => {
+    setKeyUp(false);
+    setUpClicks(0);
+  };
+
+  const downRelease = () => {
+    setKeyDown(false);
+    setDownClicks(0);
   };
 
   return (
@@ -95,16 +109,32 @@ function App() {
         </div>
       </div>
       <div className="controls">
-        <button className="control up" onClick={upPress}>
+        <button
+          className="control up"
+          onTouchStart={upPress}
+          onTouchEnd={upRelease}
+        >
           ↑
         </button>
-        <button className="control left" onClick={leftPress}>
+        <button
+          className="control left"
+          onTouchStart={leftPress}
+          onTouchEnd={leftRelease}
+        >
           ←
         </button>
-        <button className="control down" onClick={downPress}>
+        <button
+          className="control down"
+          onTouchStart={downPress}
+          onTouchEnd={downRelease}
+        >
           ↓
         </button>
-        <button className="control right" onClick={rightPress}>
+        <button
+          className="control right"
+          onTouchStart={rightPress}
+          onTouchEnd={rightRelease}
+        >
           →
         </button>
       </div>

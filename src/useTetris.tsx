@@ -20,10 +20,14 @@ export interface Square {
 
 interface TetrisHook {
   start: () => void;
-  leftControl: () => void;
-  rightControl: () => void;
-  upControl: () => void;
-  downControl: () => void;
+  setKeyLeft: (isPressed: boolean) => void;
+  setKeyRight: (isPressed: boolean) => void;
+  setKeyUp: (isPressed: boolean) => void;
+  setKeyDown: (isPressed: boolean) => void;
+  setLeftClicks: (clicks: number) => void;
+  setRightClicks: (clicks: number) => void;
+  setUpClicks: (clicks: number) => void;
+  setDownClicks: (clicks: number) => void;
   board: Square[][];
   gameOver: boolean;
   level: number;
@@ -197,32 +201,100 @@ const useTetris = (): TetrisHook => {
     setBoard(newBoard);
   };
 
+  const [keyLeft, setKeyLeft] = useState(false);
+  const [keyRight, setKeyRight] = useState(false);
+  const [keyUp, setKeyUp] = useState(false);
+  const [keyDown, setKeyDown] = useState(false);
+
+  const [leftClicks, setLeftClicks] = useState(0);
+  const [rightClicks, setRightClicks] = useState(0);
+  const [upClicks, setUpClicks] = useState(0);
+  const [downClicks, setDownClicks] = useState(0);
+
   // Set keyboard controls
   useEffect(() => {
     const keyClick = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft" || e.key === "a") {
-        leftControl();
+        setKeyLeft(true);
       }
 
       if (e.key === "ArrowRight" || e.key === "d") {
-        rightControl();
+        setKeyRight(true);
       }
 
       if (e.key === "ArrowUp" || e.key === "w") {
-        upControl();
+        setKeyUp(true);
       }
-      
+
       if (e.key === "ArrowDown" || e.key === "s") {
-        downControl();
+        setKeyDown(true);
+      }
+    };
+
+    const keyUp = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft" || e.key === "a") {
+        setKeyLeft(false);
+        setLeftClicks(0);
+      }
+
+      if (e.key === "ArrowRight" || e.key === "d") {
+        setKeyRight(false);
+        setRightClicks(0);
+      }
+
+      if (e.key === "ArrowUp" || e.key === "w") {
+        setKeyUp(false);
+        setUpClicks(0);
+      }
+
+      if (e.key === "ArrowDown" || e.key === "s") {
+        setKeyDown(false);
+        setDownClicks(0);
       }
     };
 
     document.addEventListener("keydown", keyClick);
+    document.addEventListener("keyup", keyUp);
 
     return () => {
       document.removeEventListener("keydown", keyClick);
+      document.removeEventListener("keyup", keyUp);
     };
-  }, [board]);
+  }, []);
+
+  const keyListener = () => {
+    if (keyLeft && keyRight) {
+      return;
+    }
+    if (keyLeft) {
+      setLeftClicks((l) => l + 1);
+      if (leftClicks !== 1) {
+        leftControl();
+      }
+    }
+    if (keyRight) {
+      setRightClicks((r) => r + 1);
+      if (rightClicks !== 1) {
+        rightControl();
+      }
+    }
+    if (keyUp) {
+      setUpClicks((u) => u + 1);
+      if (upClicks !== 1) {
+        upControl();
+        setKeyUp(false);
+      }
+    }
+    if (keyDown) {
+      console.log(downClicks);
+      setDownClicks((d) => d + 1);
+      if (downClicks !== 1) {
+        downControl();
+      }
+    }
+  };
+
+  useInterval(keyListener, 60, reset);
 
   // Start game on initial load
   useEffect(() => {
@@ -231,10 +303,14 @@ const useTetris = (): TetrisHook => {
 
   return {
     start,
-    leftControl,
-    rightControl,
-    upControl,
-    downControl,
+    setKeyLeft,
+    setKeyRight,
+    setKeyUp,
+    setKeyDown,
+    setLeftClicks,
+    setRightClicks,
+    setUpClicks,
+    setDownClicks,
     board,
     gameOver,
     level,
