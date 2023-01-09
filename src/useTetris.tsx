@@ -20,6 +20,10 @@ export interface Square {
 
 interface TetrisHook {
   start: () => void;
+  leftControl: () => void;
+  rightControl: () => void;
+  upControl: () => void;
+  downControl: () => void;
   board: Square[][];
   gameOver: boolean;
   level: number;
@@ -157,42 +161,59 @@ const useTetris = (): TetrisHook => {
     setHighScores(JSON.parse(storedScores) as number[]);
   }, []);
 
+  const leftControl = () => {
+    if (blockedLeft(board)) {
+      return;
+    }
+    const newBoard = moveLeft(board);
+    setBoard(newBoard);
+  };
+
+  const rightControl = () => {
+    if (blockedRight(board)) {
+      return;
+    }
+    const newBoard = moveRight(board);
+    setBoard(newBoard);
+  };
+
+  const upControl = () => {
+    const newBoard = rotate(board);
+    // Can not rotate
+    if (!newBoard) {
+      return;
+    }
+    setBoard(newBoard);
+  };
+
+  const downControl = () => {
+    if (blockedDown(board)) {
+      const newBoard = lockBlock(board, scoreLines);
+      setReset(Date.now());
+      setBoard(newBoard);
+      return;
+    }
+    const newBoard = moveDown(board);
+    setBoard(newBoard);
+  };
+
+  // Set keyboard controls
   useEffect(() => {
     const keyClick = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft" || e.key === "a") {
-        if (blockedLeft(board)) {
-          return;
-        }
-        const newBoard = moveLeft(board);
-        setBoard(newBoard);
+        leftControl();
       }
 
       if (e.key === "ArrowRight" || e.key === "d") {
-        if (blockedRight(board)) {
-          return;
-        }
-        const newBoard = moveRight(board);
-        setBoard(newBoard);
-      }
-
-      if (e.key === "ArrowDown" || e.key === "s") {
-        if (blockedDown(board)) {
-          const newBoard = lockBlock(board, scoreLines);
-          setReset(Date.now());
-          setBoard(newBoard);
-          return;
-        }
-        const newBoard = moveDown(board);
-        setBoard(newBoard);
+        rightControl();
       }
 
       if (e.key === "ArrowUp" || e.key === "w") {
-        const newBoard = rotate(board);
-        // Can not rotate
-        if (!newBoard) {
-          return;
-        }
-        setBoard(newBoard);
+        upControl();
+      }
+      
+      if (e.key === "ArrowDown" || e.key === "s") {
+        downControl();
       }
     };
 
@@ -208,7 +229,19 @@ const useTetris = (): TetrisHook => {
     setTiming(1000);
   }, []);
 
-  return { start, board, gameOver, level, lines, score, highScores };
+  return {
+    start,
+    leftControl,
+    rightControl,
+    upControl,
+    downControl,
+    board,
+    gameOver,
+    level,
+    lines,
+    score,
+    highScores,
+  };
 };
 
 export default useTetris;

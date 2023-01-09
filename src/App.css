@@ -185,6 +185,7 @@ body {
     "left up right"
     "left down right";
   grid-template-columns: 0.3fr 0.4fr 0.3fr;
+  user-select: none;
 }
 
 .control {

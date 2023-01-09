@@ -1,22 +1,50 @@
-import { Fragment, useEffect, useRef } from "react";
+import {
+  Fragment,
+  ReactEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import "./App.css";
 import useTetris from "./useTetris";
 
 function App() {
-  const { start, board, gameOver, level, lines, score, highScores } =
-    useTetris();
+  const {
+    start,
+    leftControl,
+    rightControl,
+    upControl,
+    downControl,
+    board,
+    gameOver,
+    level,
+    lines,
+    score,
+    highScores,
+  } = useTetris();
 
-  const appRef = useRef(null);
+  const leftPress = () => {
+    leftControl();
+    window.navigator.vibrate(100);
+  };
 
-  useEffect(() => {
-    console.log(window.innerHeight);
-    // console.log(window.innerWidth);
-    // console.log(`${1}:${window.innerHeight / window.innerWidth}`);
-    console.log((appRef.current! as HTMLDivElement).clientHeight);
-  }, []);
+  const rightPress = () => {
+    rightControl();
+    window.navigator.vibrate(100);
+  };
+
+  const upPress = () => {
+    upControl();
+    window.navigator.vibrate(100);
+  };
+
+  const downPress = () => {
+    downControl();
+    window.navigator.vibrate(100);
+  };
 
   return (
-    <div className="App" ref={appRef}>
+    <div className="App">
       <div className="game">
         <div></div>
         <div className="board-container">
@@ -67,10 +95,18 @@ function App() {
         </div>
       </div>
       <div className="controls">
-        <button className="control up">↑</button>
-        <button className="control left">←</button>
-        <button className="control down">↓</button>
-        <button className="control right">→</button>
+        <button className="control up" onClick={upPress}>
+          ↑
+        </button>
+        <button className="control left" onClick={leftPress}>
+          ←
+        </button>
+        <button className="control down" onClick={downPress}>
+          ↓
+        </button>
+        <button className="control right" onClick={rightPress}>
+          →
+        </button>
       </div>
     </div>
   );
