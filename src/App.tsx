@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import "./App.css";
 import useTetris from "./useTetris";
 
@@ -6,8 +6,17 @@ function App() {
   const { start, board, gameOver, level, lines, score, highScores } =
     useTetris();
 
+  const appRef = useRef(null);
+
+  useEffect(() => {
+    console.log(window.innerHeight);
+    // console.log(window.innerWidth);
+    // console.log(`${1}:${window.innerHeight / window.innerWidth}`);
+    console.log((appRef.current! as HTMLDivElement).clientHeight);
+  }, []);
+
   return (
-    <div className="App">
+    <div className="App" ref={appRef}>
       <div className="game">
         <div></div>
         <div className="board-container">
@@ -29,6 +38,7 @@ function App() {
           </div>
         </div>
         <div className="info">
+          <p className="width-control">GAME OVER</p>
           <div className="score-grid">
             <h2>Level</h2>
             <h1>{level}</h1>
@@ -55,6 +65,12 @@ function App() {
           )}
           {gameOver && <button onClick={() => start()}>Start</button>}
         </div>
+      </div>
+      <div className="controls">
+        <button className="control up">↑</button>
+        <button className="control left">←</button>
+        <button className="control down">↓</button>
+        <button className="control right">→</button>
       </div>
     </div>
   );
