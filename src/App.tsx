@@ -69,7 +69,9 @@ function App() {
                   {row.map((square, j) => {
                     return (
                       <div
-                        className={`square ${square.name}`}
+                        className={`square ${square.name} ${
+                          "preview-" + square.preview
+                        }`}
                         key={"square" + j}
                       ></div>
                     );

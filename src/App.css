@@ -142,7 +142,7 @@ body {
 }
 
 .O {
-  background-color: rgb(241, 241, 1);
+  background-color: #efef01;
 }
 
 .T {
@@ -163,6 +163,48 @@ body {
 
 .Z {
   background-color: #f41b1b;
+}
+
+.preview-I {
+  background-color: #18f2fd7e;
+}
+
+.preview-O {
+  background-color: #efef017e;
+}
+
+.preview-T {
+  background-color: #a138f27e;
+}
+
+.preview-J {
+  background-color: #236dff7e;
+}
+
+.preview-L {
+  background-color: #ff9d007e;
+}
+
+.preview-S {
+  background-color: #1be1097e;
+}
+
+.preview-Z {
+  background-color: #f41b1b7e;
+}
+
+.preview-I,
+.preview-O,
+.preview-T,
+.preview-J,
+.preview-L,
+.preview-S,
+.preview-Z {
+  border-top: min(0.6vw, 0.6vh) solid rgba(209, 209, 209, 0.19);
+  border-right: min(0.6vw, 0.6vh) solid rgba(62, 62, 62, 0.211);
+  border-bottom: min(0.6vw, 0.6vh) solid rgba(0, 0, 0, 0.317);
+  border-left: min(0.6vw, 0.6vh) solid rgba(180, 180, 180, 0.343);
+  border-style: outset;
 }
 
 .width-control {

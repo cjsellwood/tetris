@@ -1,4 +1,4 @@
-import { Square } from "./useTetris";
+import { duplicateBoard, Square } from "./useTetris";
 
 export const findBounds = (board: Square[][]) => {
   let [lowI, highI, lowJ, highJ] = [20, -1, 10, -1];
@@ -79,9 +79,7 @@ export const rotate = (board: Square[][]) => {
     return;
   }
 
-  const newBoard: Square[][] = [
-    ...board.map((row) => [...row.map((square) => ({ ...square }))]),
-  ];
+  const newBoard: Square[][] = duplicateBoard(board)
 
   const width = Math.max(highI - lowI, highJ - lowJ);
 

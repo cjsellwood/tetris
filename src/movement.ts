@@ -1,9 +1,7 @@
-import { Square } from "./useTetris";
+import { duplicateBoard, Square } from "./useTetris";
 
 export const moveDown = (board: Square[][]) => {
-  const newBoard = [
-    ...board.map((row) => [...row.map((square) => ({ ...square }))]),
-  ];
+  const newBoard = duplicateBoard(board)
 
   // Move piece down
   for (let i = newBoard.length - 1; i >= 0; i--) {
@@ -44,9 +42,7 @@ export const lockBlock = (
   board: Square[][],
   scoreLines: (lines: number) => void
 ) => {
-  const newBoard = [
-    ...board.map((row) => [...row.map((square) => ({ ...square }))]),
-  ];
+  const newBoard = duplicateBoard(board)
 
   // Set to inactive
   for (let i = 0; i < newBoard.length; i++) {
@@ -91,9 +87,7 @@ export const blockedDown = (board: Square[][]) => {
 export const moveLeft = (board: Square[][]) => {
   // Don't move if hitting wall all another piece
 
-  const newBoard = [
-    ...board.map((row) => [...row.map((square) => ({ ...square }))]),
-  ];
+  const newBoard = duplicateBoard(board)
 
   for (let i = 0; i < newBoard.length; i++) {
     for (let j = 0; j < newBoard[i].length; j++) {
@@ -133,9 +127,7 @@ export const blockedLeft = (board: Square[][]) => {
 };
 
 export const moveRight = (board: Square[][]) => {
-  const newBoard = [
-    ...board.map((row) => [...row.map((square) => ({ ...square }))]),
-  ];
+  const newBoard = duplicateBoard(board)
 
   for (let i = 0; i < newBoard.length; i++) {
     for (let j = newBoard[i].length - 1; j >= 0; j--) {

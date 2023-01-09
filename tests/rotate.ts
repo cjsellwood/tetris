@@ -1,4 +1,4 @@
-import { Square } from "../src/useTetris";
+import { duplicateBoard, Square } from "../src/useTetris";
 import { findBounds, rotate } from "../src/rotate";
 
 describe("Finding shape bounds", () => {
@@ -136,9 +136,8 @@ describe("Finding shape bounds", () => {
 describe("Rotating piece", () => {
   test("Rotates a J shape", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
-    const board = [
-      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
-    ];
+    const board = duplicateBoard(startBoard);
+
     const block = { active: true, name: "J", orientation: 0 };
     board[7][3] = { ...block };
     board[8][3] = { ...block };
@@ -165,9 +164,8 @@ describe("Rotating piece", () => {
 
   test("rotates a J shape that has already been rotated", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
-    const board = [
-      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
-    ];
+    const board = duplicateBoard(startBoard);
+
     const block = { active: true, name: "J", orientation: 1 };
     board[7][4] = { ...block };
     board[7][5] = { ...block };
@@ -195,9 +193,8 @@ describe("Rotating piece", () => {
 
   test("Does not rotate a J shape that would go over edge", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
-    const board = [
-      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
-    ];
+    const board = duplicateBoard(startBoard);
+
     const block = { active: true, name: "J", orientation: 1 };
     board[7][0] = { ...block };
     board[7][1] = { ...block };
@@ -211,9 +208,8 @@ describe("Rotating piece", () => {
 
   test("Rotates a J shape without effecting already placed pieces", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
-    const board = [
-      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
-    ];
+    const board = duplicateBoard(startBoard);
+
     const block = { active: true, name: "J", orientation: 0 };
     board[7][3] = { ...block };
     board[8][3] = { ...block };
@@ -241,9 +237,8 @@ describe("Rotating piece", () => {
 
   test("Does not rotate a J shape with pieces already in position", () => {
     const startBoard: Square[][] = new Array(20).fill(new Array(10).fill({}));
-    const board = [
-      ...startBoard.map((row) => [...row.map((square) => ({ ...square }))]),
-    ];
+    const board = duplicateBoard(startBoard)
+    
     const block = { active: true, name: "J", orientation: 1 };
     board[7][4] = { ...block };
     board[7][5] = { ...block };

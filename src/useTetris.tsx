@@ -11,11 +11,13 @@ import {
   moveRight,
 } from "./movement";
 import shapes from "./shapes";
+import addPreview from "./addPreview";
 
 export interface Square {
   active?: boolean;
   name?: string;
   orientation?: number;
+  preview?: string;
 }
 
 interface TetrisHook {
@@ -35,6 +37,10 @@ interface TetrisHook {
   score: number;
   highScores: number[];
 }
+
+export const duplicateBoard = (board: Square[][]) => {
+  return [...board.map((row) => [...row.map((square) => ({ ...square }))])];
+};
 
 const useTetris = (): TetrisHook => {
   const [timing, setTiming] = useState<null | number>(null);
@@ -56,6 +62,7 @@ const useTetris = (): TetrisHook => {
       setBoard(newBoard);
     } else {
       const newBoard = moveDown(board);
+      addPreview(newBoard);
       setBoard(newBoard);
     }
   };
@@ -74,9 +81,7 @@ const useTetris = (): TetrisHook => {
   const [usedShapes, setUsedShapes] = useState<string[]>([]);
 
   const spawnBlock = () => {
-    const newBoard = [
-      ...board.map((row) => [...row.map((square) => ({ ...square }))]),
-    ];
+    const newBoard = duplicateBoard(board);
 
     const names = ["I", "O", "T", "J", "L", "S", "Z"];
 
@@ -109,6 +114,7 @@ const useTetris = (): TetrisHook => {
       newBoard[x[0]][x[1]] = { ...newBlock };
     });
 
+    addPreview(newBoard);
     setBoard(newBoard);
   };
 
@@ -170,6 +176,7 @@ const useTetris = (): TetrisHook => {
       return;
     }
     const newBoard = moveLeft(board);
+    addPreview(newBoard);
     setBoard(newBoard);
   };
 
@@ -178,6 +185,7 @@ const useTetris = (): TetrisHook => {
       return;
     }
     const newBoard = moveRight(board);
+    addPreview(newBoard);
     setBoard(newBoard);
   };
 
@@ -187,6 +195,7 @@ const useTetris = (): TetrisHook => {
     if (!newBoard) {
       return;
     }
+    addPreview(newBoard);
     setBoard(newBoard);
   };
 
@@ -195,6 +204,7 @@ const useTetris = (): TetrisHook => {
       const newBoard = lockBlock(board, scoreLines);
       setReset(Date.now());
       setBoard(newBoard);
+      setKeyDown(false);
       return;
     }
     const newBoard = moveDown(board);
@@ -286,7 +296,6 @@ const useTetris = (): TetrisHook => {
       }
     }
     if (keyDown) {
-      console.log(downClicks);
       setDownClicks((d) => d + 1);
       if (downClicks !== 1) {
         downControl();
