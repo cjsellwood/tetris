@@ -207,6 +207,9 @@ const useTetris = (): TetrisHook => {
       setKeyDown(false);
       return;
     }
+    if (!isActive()) {
+      return;
+    }
     const newBoard = moveDown(board);
     setBoard(newBoard);
   };
